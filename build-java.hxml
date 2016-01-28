@@ -1,0 +1,6 @@
+build-each.hxml
+
+-java bin/TestAll
+-cmd echo "==========<JAVA>=========="
+-cmd java -jar bin/TestAll/TestAll.jar
+-cmd echo "==========</JAVA>=========="
