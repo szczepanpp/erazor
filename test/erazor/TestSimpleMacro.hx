@@ -78,7 +78,9 @@ class TestSimpleMacro
 	public function test_Source_level_explicit_import():Void
 	{
 		var template = new SimpleMacroTest10();
-		Assert.equals(Std.string(haxe.Int64.make(0x1234, 0x5678)), template.execute());
+    var sB = new StringBuf();
+    sB.add(haxe.Int64.make(0x1234, 0x5678));
+    Assert.equals(sB.toString(), template.execute());
 	}
 }
 
