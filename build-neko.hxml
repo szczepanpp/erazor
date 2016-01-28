@@ -1,0 +1,6 @@
+build-each.hxml
+
+-neko bin/TestAll.n
+-cmd echo "==========<NEKO>=========="
+-cmd neko bin/TestAll.n
+-cmd echo "==========</NEKO>=========="

@@ -1,0 +1,6 @@
+build-each.hxml
+
+-cs bin/TestAll
+-cmd echo "==========<CS>=========="
+-cmd mono --debug bin/TestAll/bin/TestAll.exe
+-cmd echo "==========</CS>=========="

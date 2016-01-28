@@ -1,0 +1,6 @@
+build-each.hxml
+
+-cpp bin/TestAll
+-cmd echo "==========<CPP>=========="
+-cmd ./bin/Test
+-cmd echo "==========</CPP>=========="

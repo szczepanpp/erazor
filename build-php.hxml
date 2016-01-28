@@ -1,0 +1,6 @@
+build-each.hxml
+
+-php bin/TestAll
+-cmd echo "==========<PHP>=========="
+-cmd php bin/TestAll/index.php
+-cmd echo "==========</PHP>=========="

@@ -1,0 +1,6 @@
+build-each.hxml
+
+-python bin/TestAll.py
+-cmd echo "==========<PYTHON>=========="
+-cmd python3 bin/TestAll.py
+-cmd echo "==========</PYTHON>=========="
