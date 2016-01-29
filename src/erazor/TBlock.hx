@@ -7,7 +7,10 @@ enum TBlock
 	
 	// Code
 	codeBlock(s : String);
+
+	// Code that should be kept after execution
+	keepCodeBlock(code : String, source: String);
 	
 	// Code that should be printed immediately
-	printBlock(s : String);
+	printBlock(code : String, source: String);
 }

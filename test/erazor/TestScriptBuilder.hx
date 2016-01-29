@@ -26,7 +26,7 @@ class TestScriptBuilder
 	
 	public function test_If_print_and_literal_TBlocks_are_assembled_correctly()
 	{
-		var input = [TBlock.literal("Hello "), TBlock.printBlock("name")];
+		var input = [TBlock.literal("Hello "), TBlock.printBlock("name", "name")];
 		
 		assertScript([
 			"__b__.add('Hello ');",
@@ -61,7 +61,7 @@ class TestScriptBuilder
 	{
 		var input = [
 			TBlock.codeBlock("for(u in users) {"),
-			TBlock.printBlock('u.name'),
+			TBlock.printBlock('u.name', 'u.name'),
 			TBlock.literal('<br>'),
 			TBlock.codeBlock('}')
 		];

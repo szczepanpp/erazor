@@ -149,6 +149,11 @@ class Parser
 		return template.length > offset ? template.charAt(offset) : null;
 	}
 
+	function peekFrag(template : String, fragLength = 0)
+	{
+		return template.length > fragLength ? template.substr(0, fragLength) : null;
+	}
+
 	function parseVariable(template : String) : Block
 	{
 		var output = "";
@@ -190,7 +195,7 @@ class Parser
 			}
 		} while (char != null);
 
-		return { block: TBlock.printBlock(output), length: output.length + 1, start:this.pos };
+		return { block: TBlock.printBlock(output, output), length: output.length + 1, start:this.pos };
 	}
 
 	function parseVariableChar(char : String) : ParseResult
@@ -228,20 +233,25 @@ class Parser
 		}
 
 		// Test for variable like @name
-		if (peek(template) == '@' && isIdentifier(peek(template, 1)))
+		var keepBlock = peekFrag(template, 6) == '@keep{';
+		if (peek(template) == '@' && !keepBlock && isIdentifier(peek(template, 1)))
 			return parseVariable(template);
 
-		// Test for code or print block @{ or @(
-		var startBrace = peek(template, 1);
+		// Test for code or print block @{ or @( or @keep{
+		var off = keepBlock ? 4 : 0;
+		var startBrace = peek(template, 1 + off);
 		var endBrace = (startBrace == '{') ? '}' : ')';
 
-		var str = parseScriptPart(template.substr(1), startBrace, endBrace);
-		var noBraces = StringTools.trim(str.substr(1, str.length - 2));
-
+		var str = parseScriptPart(template.substr(1 + off), startBrace, endBrace);
+		var noBraces = StringTools.trim(str.substr(1 + off, str.length - 2 - off));
+		
 		if(startBrace == '{')
-			return { block: TBlock.codeBlock(noBraces), length: str.length + 1, start:this.pos };
+			if(keepBlock)
+				return { block: TBlock.keepCodeBlock(noBraces, str), length: str.length + 1 + off, start:this.pos + off };
+			else
+				return { block: TBlock.codeBlock(noBraces), length: str.length + 1, start:this.pos };
 		else // (
-			return { block: TBlock.printBlock(noBraces), length: str.length + 1, start:this.pos };
+			return { block: TBlock.printBlock(noBraces, str), length: str.length + 1, start:this.pos };
 	}
 
 	private function parseString(str : String, modifier : String -> ParseResult, throwAtEnd : Bool) : String
