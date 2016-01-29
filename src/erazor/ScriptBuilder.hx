@@ -30,8 +30,11 @@ class ScriptBuilder
 			case codeBlock(s):
 				return s + "\n";
 			
-			case printBlock(s):
-				return context + ".unsafeAdd(" + s + ");\n";
+			case printBlock(code, source):
+				return context + ".unsafeAdd(" + code + ");\n";
+			
+			case keepCodeBlock(code, source):
+				return code + "\n" + context + ".add('@keep" + StringTools.replace(source, "'", "\\'") + "');\n";
 		}
 	}
 }

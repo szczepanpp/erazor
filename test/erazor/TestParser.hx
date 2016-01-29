@@ -52,32 +52,32 @@ class TestParser
 		
 		// Simple substitution
 		output = parser.parse('Hello @name');
-		Assert.same([TBlock.literal("Hello "), TBlock.printBlock("name")], output);
+		Assert.same([TBlock.literal("Hello "), TBlock.printBlock("name", 'name')], output);
 		
 		// String substitution
 		output = parser.parse('Hello@(name)abc');
-		Assert.same([TBlock.literal("Hello"), TBlock.printBlock('name'), TBlock.literal("abc")], output);
+    Assert.same([TBlock.literal("Hello"), TBlock.printBlock('name', '(name)'), TBlock.literal("abc")], output);
 
 		output = parser.parse('Hello @("Boris")');
-		Assert.same([TBlock.literal("Hello "), TBlock.printBlock('"Boris"')], output);
+    Assert.same([TBlock.literal("Hello "), TBlock.printBlock('"Boris"', '("Boris")')], output);
 
 		// String substitution with escaped quotation marks
 		output = parser.parse('Hello @(a + "A \\" string.")');
-		Assert.same([TBlock.literal("Hello "), TBlock.printBlock('a + "A \\" string."')], output);
+    Assert.same([TBlock.literal("Hello "), TBlock.printBlock('a + "A \\" string."', '(a + "A \\" string.")')], output);
 
 		output = parser.parse("Hello @(a + 'A \\' string.')");
-		Assert.same([TBlock.literal("Hello "), TBlock.printBlock("a + 'A \\' string.'")], output);
+    Assert.same([TBlock.literal("Hello "), TBlock.printBlock("a + 'A \\' string.'", "(a + 'A \\' string.')")], output);
 
 		output = parser.parse('@("\'Mixing\'")');
-		Assert.same([TBlock.printBlock("\"'Mixing'\"")], output);
+    Assert.same([TBlock.printBlock("\"'Mixing'\"", '("\'Mixing\'")')], output);
 		
 		// Braces around var
 		output = parser.parse('Hello {@name}');
-		Assert.same([TBlock.literal("Hello {"), TBlock.printBlock('name'), TBlock.literal('}')], output);
+    Assert.same([TBlock.literal("Hello {"), TBlock.printBlock('name', 'name'), TBlock.literal('}')], output);
 		
 		// Concatenated vars with space between start/end of block
 		output = parser.parse('@( user.firstname + " " + user.lastname )');
-		Assert.same([TBlock.printBlock('user.firstname + " " + user.lastname')], output);
+    Assert.same([TBlock.printBlock('user.firstname + " " + user.lastname', '( user.firstname + " " + user.lastname )')], output);
 	}
 
 	public function test_If_codeblocks_are_parsed_correctly()
@@ -107,19 +107,19 @@ class TestParser
 		var output : Array<TBlock>;
 		
 		output = parser.parse('@custom(0, 10, "test(")');
-		Assert.same([TBlock.printBlock('custom(0, 10, "test(")')], output);
+		Assert.same([TBlock.printBlock('custom(0, 10, "test(")', 'custom(0, 10, "test(")')], output);
 		
 		output = parser.parse('@test[a+1]');
-		Assert.same([TBlock.printBlock("test[a+1]")], output);
+		Assert.same([TBlock.printBlock("test[a+1]", 'test[a+1]')], output);
 		
 		output = parser.parse('@test.users[user.id]');
-		Assert.same([TBlock.printBlock('test.users[user.id]')], output);
+    Assert.same([TBlock.printBlock('test.users[user.id]', 'test.users[user.id]')], output);
 		
 		output = parser.parse('@test.user.id');
-		Assert.same([TBlock.printBlock('test.user.id')], output);
+    Assert.same([TBlock.printBlock('test.user.id', 'test.user.id')], output);
 		
 		output = parser.parse('@getFunction()()');
-		Assert.same([TBlock.printBlock('getFunction()()')], output);
+    Assert.same([TBlock.printBlock('getFunction()()', 'getFunction()()')], output);
 	}
 
 	public function test_If_keyword_blocks_are_parsed_correctly()
@@ -180,7 +180,7 @@ class TestParser
 		Assert.same([
 			TBlock.codeBlock("for (u in users) {"),
 			TBlock.literal(' '),
-			TBlock.printBlock('u.name'),
+			TBlock.printBlock('u.name', 'u.name'),
 			TBlock.literal('<br> '),
 			TBlock.codeBlock('}')
 		], output);
@@ -190,7 +190,7 @@ class TestParser
 		Assert.same([
 			TBlock.codeBlock("for (i in 0...3) {"),
 			TBlock.literal(' '),
-			TBlock.printBlock('i'),
+			TBlock.printBlock('i', 'i'),
 			TBlock.literal('<br> '),
 			TBlock.codeBlock('}')
 		], output);
