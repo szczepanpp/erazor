@@ -34,6 +34,16 @@ class TestScriptBuilder
 		], builder.build(input));
 	}
 	
+	public function test_If_print_and_literal_TBlocks_are_assembled_correctly_with_interceptor()
+	{
+		var input = [TBlock.literal("Hello "), TBlock.printBlock("name", "name")];
+		
+		assertScript([
+			"__b__.add('Hello ');",
+			"__b__.unsafeAdd(intercept(name));"
+		], builder.build(input, [interceptor]));
+	}
+	
 	public function test_If_keyword_TBlocks_are_assembled_correctly()
 	{
 		var input = [
@@ -72,6 +82,23 @@ class TestScriptBuilder
 			"__b__.add('<br>');",
 			"}"
 		], builder.build(input));
+	}
+
+	public function test_If_for_TBlocks_are_assembled_correctly_with_interceptor()
+	{
+		var input = [
+			TBlock.codeBlock("for(u in users) {"),
+			TBlock.printBlock('u.name', 'u.name'),
+			TBlock.literal('<br>'),
+			TBlock.codeBlock('}')
+		];
+		
+		assertScript([
+			"for(u in users) {",
+			"__b__.unsafeAdd(intercept(u.name));",
+			"__b__.add('<br>');",
+			"}"
+		], builder.build(input, [interceptor]));
 	}
 
 	public function test_If_codeBlocks_are_assembled_correctly()
@@ -147,4 +174,15 @@ class TestScriptBuilder
 	{
 		Assert.equals(expected, lines.join("\n") + "\n");
 	}
+	
+  private function interceptor(output: String, block: TBlock): String
+  {
+    switch(block)
+    {
+      case printBlock(_, _):
+        return 'intercept($output)';
+      case _:
+    }
+    return output;
+  }
 }
