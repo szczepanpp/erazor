@@ -13,6 +13,8 @@ typedef PropertyObject = Dynamic;
 
 class Template
 {
+  private var scriptInterceptors: Array<String->TBlock->String>;
+  
 	private var template : String;
 	
 	public var variables(default, null) : Hash<Dynamic>;
@@ -23,6 +25,7 @@ class Template
 	{
 		this.template = template;
 		this.helpers = new Hash<Dynamic>();
+		this.scriptInterceptors = [];
 	}
 	
 	public dynamic function escape(str : String) : String
@@ -35,6 +38,11 @@ class Template
 		helpers.set(name, helper);
 	}
 	
+	public function addInterceptor(interceptor: String->TBlock->String) : Void
+	{
+		scriptInterceptors.push(interceptor);
+	}
+	
 	public function execute(?content : PropertyObject) : String
 	{
 		var buffer = new Output(escape);
@@ -43,7 +51,7 @@ class Template
 		var parsedBlocks = new Parser().parse(template);
 		
 		// Make a hscript with the buffer as context.
-		var script = new ScriptBuilder('__b__').build(parsedBlocks);
+		var script = new ScriptBuilder('__b__').build(parsedBlocks, scriptInterceptors);
 		
 		// Make hscript parse and interpret the script.
 		var parser = new hscript.Parser();
