@@ -48,6 +48,7 @@ class Output extends StringBuf {
 		return str;
 	}
 
+  @:keep
 	public inline function unsafeAdd( str : Dynamic ){
 		var val = if( Std.is( str , TString ) ){
 			str.toString();
